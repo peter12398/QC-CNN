@@ -1,4 +1,5 @@
 import torch
+from torch import tensor
 import torch.nn as nn
 import numpy as np
 import pennylane as qml
@@ -25,6 +26,7 @@ def circuit(inputs, weights):
         qml.Hadamard(wires=qub)
         for i in range(var_per_qubit):
             if (qub * var_per_qubit + i) < len(inputs):
+                print('qml.{}({}, wires = {})'.format(encoding_gates[i], inputs[qub * var_per_qubit + i], qub))
                 exec('qml.{}({}, wires = {})'.format(encoding_gates[i], inputs[qub * var_per_qubit + i], qub))
             else:  # load nothing
                 pass
@@ -74,6 +76,7 @@ class Net(nn.Module):
     def forward(self, X):
         bs = X.shape[0]
         X = X.view(bs, 1, image_x_y_dim, image_x_y_dim)
+        print("X=", X.shape)
         X = self.ql1(X)
         X = self.lr1(self.conv1(X))
         X = X.view(bs,-1)
